@@ -1,0 +1,12 @@
+{
+  "name": "our-own-graphql-dataloader",
+  "version": "1.0.0",
+  "description": "Our own GraphQL DataLoader",
+  "main": "index.mjs",
+  "scripts": {
+    "start": "node index.mjs",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
