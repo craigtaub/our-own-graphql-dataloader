@@ -1,3 +1,5 @@
+=== LONG 
+
 A) threadOne: const user = await loader.load(1);
 load
   get current batch
@@ -7,9 +9,11 @@ load
     _batchScheduleFn
       no resolvedPromise
       set "resolvedPromise = Promise.resolve();"
+      CREATE RESOLVED PROMISE
       call promise.then
     returns new batch 
   create new promise
+  NEW PROMISE CREATED
   add the promises resolve/reject to batch callbacks array
   return the promise 
 
@@ -18,20 +22,40 @@ load
   get current batch 
     return existing batch class._batch 
   create new promise 
+  NEW PROMISE CREATED
   add the promises resolve/reject to batch callbacks array
   return the promise 
 
 C)
 _batchScheduleFn
   resolvedPromise.then resolves
+  PROMISE CALLED
   calls nextTick with callback, which calls _dispatchBatch
 
 D)
-_getCurrentBatch
+_getCurrentBatch -> _batchScheduleFn ->
   _dispatchBatch
     execute "batch function" class._batch.keys, returns batch promise 
     batch promise runs with .then(values)
+    PROMISE CALLED
     iterates over class._batch.callbacks.resolve(values) - needed to get past "await loader()"
+    RESOLVE PROMISE x 2
+===
 
-    
+== short
+let resolvedPromise
 
+_batchScheduleFn(cb) // _dispatchBatch
+  resolvedPromise = Promise.resolve();
+  resolvedPromise.then(() => {
+    // this runs after both "await loader()"
+    // THINK can just call "cb()" w/o nextTick
+    process.nextTick(cb);
+  });
+
+load
+  _batchScheduleFn(() => {
+    _dispatchBatch();
+  });
+  
+==

@@ -37,12 +37,15 @@ export class DataLoader {
     console.log('[data-loader] - _batchScheduleFn - pre')
     if (!resolvedPromise) {
       console.log('[data-loader] - _batchScheduleFn - set resolvedPromise')
+      console.log('[data-loader] - _batchScheduleFn - RESOLVE PROMISE')
       resolvedPromise = Promise.resolve();
     }
     console.log('[data-loader] - _batchScheduleFn - resolvedPromise called')
     resolvedPromise.then(() => {
+      console.log('[data-loader] - _batchScheduleFn - PROMISE CALLED')
       console.log('[data-loader] - _batchScheduleFn - resolvedPromise.then nextTick')
-      process.nextTick(fn);
+      // process.nextTick(fn);
+      fn()
     });
   }
   _dispatchBatch() {
@@ -63,6 +66,7 @@ export class DataLoader {
     // Await the resolution of the call to batchLoadFn.
     batchPromise
       .then((values) => {
+        console.log('[data-loader] - _dispatchBatch - PROMISE CALLED')
         console.log('[data-loader] - _dispatchBatch - then')
         // Resolve all cache hits in the same micro-task as freshly loaded values.
         // resolveCacheHits(batch);
@@ -74,6 +78,7 @@ export class DataLoader {
             this._batch.callbacks[i].reject(value);
           } else {
             console.log('[data-loader] - _dispatchBatch - resolve')
+            console.log('[data-loader] - _dispatchBatch - RESOLVE PROMISE')
             this._batch.callbacks[i].resolve(value);
           }
         }
@@ -121,6 +126,7 @@ export class DataLoader {
     // Otherwise, produce a new Promise for this key, and enqueue it to be
     // dispatched along with the current batch.
     batch.keys.push(key);
+    console.log('[data-loader] - load - NEW PROMISE')
     const promise = new Promise((resolve, reject) => {
       console.log('[data-loader] - load - batch.callback push prom')
       batch.callbacks.push({ resolve, reject });
