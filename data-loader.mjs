@@ -44,8 +44,8 @@ export class DataLoader {
     resolvedPromise.then(() => {
       console.log('[data-loader] - _batchScheduleFn - PROMISE CALLED')
       console.log('[data-loader] - _batchScheduleFn - resolvedPromise.then nextTick')
-      // process.nextTick(fn);
-      fn()
+      process.nextTick(fn);
+      // fn()
     });
   }
   _dispatchBatch() {
