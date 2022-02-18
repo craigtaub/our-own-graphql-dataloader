@@ -1,0 +1,37 @@
+A) threadOne: const user = await loader.load(1);
+load
+  get current batch
+    no existing batch - 
+    new batch "{ hasDispatched: false, keys: [], callbacks: [] };"
+    store in class._batch
+    _batchScheduleFn
+      no resolvedPromise
+      set "resolvedPromise = Promise.resolve();"
+      call promise.then
+    returns new batch 
+  create new promise
+  add the promises resolve/reject to batch callbacks array
+  return the promise 
+
+B) threadTwo: const user = await loader.load(2);
+load 
+  get current batch 
+    return existing batch class._batch 
+  create new promise 
+  add the promises resolve/reject to batch callbacks array
+  return the promise 
+
+C)
+_batchScheduleFn
+  resolvedPromise.then resolves
+  calls nextTick with callback, which calls _dispatchBatch
+
+D)
+_getCurrentBatch
+  _dispatchBatch
+    execute "batch function" class._batch.keys, returns batch promise 
+    batch promise runs with .then(values)
+    iterates over class._batch.callbacks.resolve(values) - needed to get past "await loader()"
+
+    
+
