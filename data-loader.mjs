@@ -1,3 +1,29 @@
+// Private: Enqueue a Job to be executed after all "PromiseJobs" Jobs.
+//
+// ES6 JavaScript uses the concepts Job and JobQueue to schedule work to occur
+// after the current execution context has completed:
+// http://www.ecma-international.org/ecma-262/6.0/#sec-jobs-and-job-queues
+//
+// Node.js uses the `process.nextTick` mechanism to implement the concept of a
+// Job, maintaining a global FIFO JobQueue for all Jobs, which is flushed after
+// the current call stack ends.
+//
+// When calling `then` on a Promise, it enqueues a Job on a specific
+// "PromiseJobs" JobQueue which is flushed in Node as a single Job on the
+// global JobQueue.
+//
+// DataLoader batches all loads which occur in a single frame of execution, but
+// should include in the batch all loads which occur during the flushing of the
+// "PromiseJobs" JobQueue after that same execution frame.
+//
+// In order to avoid the DataLoader dispatch Job occuring before "PromiseJobs",
+// A Promise Job is created with the sole purpose of enqueuing a global Job,
+// ensuring that it always occurs after "PromiseJobs" ends.
+//
+// Node.js's job queue is unique. Browsers do not have an equivalent mechanism
+// for enqueuing a job to be performed after promise microtasks and before the
+// next macrotask. For browser environments, a macrotask is used (via
+// setImmediate or setTimeout) at a potential performance penalty.
 export class DataLoader {
   constructor(batchLoadFn) {
     this._batchLoadFn = batchLoadFn;
@@ -57,6 +83,8 @@ export class DataLoader {
       });
   }
 
+  // Private: Either returns the current batch, or creates and schedules a
+  // dispatch of a new batch for the given loader.
   _getCurrentBatch() {
     console.log('[data-loader] - _getCurrentBatch - pre')
     const existingBatch = this._batch;
@@ -80,6 +108,9 @@ export class DataLoader {
 
     return newBatch;
   }
+  /**
+   * Loads a key, returning a `Promise` for the value represented by that key.
+   */
   async load(key) {
     console.log('[data-loader] - load - pre')
     // const batch = { keys: [], callbacks: [] }; // TODO - current batch
@@ -87,6 +118,8 @@ export class DataLoader {
 
     // var cacheMap = this._cacheMap;
 
+    // Otherwise, produce a new Promise for this key, and enqueue it to be
+    // dispatched along with the current batch.
     batch.keys.push(key);
     const promise = new Promise((resolve, reject) => {
       console.log('[data-loader] - load - batch.callback push prom')
