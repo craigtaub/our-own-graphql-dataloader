@@ -11,6 +11,7 @@ const dispatchBatch = () => {
   batchPromise.then((values) => {
     for (var i = 0; i < batch.callbacks.length; i++) {
       var value = values[i];
+      // resolve promise callback
       batch.callbacks[i].resolve(value);
     }
   });
@@ -22,6 +23,7 @@ const batchScheduleFn = (cb) => {
 };
 
 const getCurrentBatch = () => {
+  // !hasDispatched only needed if using a 2nd tick - this example isnt
   if (batch && !batch.hasDispatched) {
     return batch;
   }
@@ -36,6 +38,7 @@ const getCurrentBatch = () => {
 const load = async (id) => {
   const localBatch = getCurrentBatch();
   localBatch.keys.push(id);
+  // add promise callback to batch
   const promise = new Promise((resolve, reject) => {
     localBatch.callbacks.push({ resolve, reject });
   });
@@ -54,6 +57,7 @@ async function threadOne() {
 }
 
 const run = async () => {
+  // make async
   batchFunction = async (keys) => {
     console.log("keys:", keys);
     // keys: [ 1, 2 ]
