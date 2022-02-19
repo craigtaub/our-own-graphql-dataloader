@@ -5,11 +5,8 @@ const keys = [];
 
 const load = async (id) => {
   keys.push(id);
-  const resolvedPromise = Promise.resolve();
-  resolvedPromise.then(() => {
-    process.nextTick(() => {
-      batchFunction(keys);
-    });
+  process.nextTick(() => {
+    batchFunction(keys);
   });
 };
 

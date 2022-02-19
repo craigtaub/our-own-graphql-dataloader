@@ -6,3 +6,9 @@ Includes
 
 - Batching
 - Ignore caching
+
+Version
+
+- just-batch
+- batch-and-scheduler
+- batch-and-promise

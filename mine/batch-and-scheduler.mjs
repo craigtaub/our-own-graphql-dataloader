@@ -1,6 +1,5 @@
 // calls batch twice with both keys. but doesnt return. uses batchSchedule functions
 
-let resolvedPromise;
 let batchFunction;
 const keys = [];
 
@@ -9,15 +8,15 @@ const dispatchBatch = () => {
 };
 
 const batchScheduleFn = (cb) => {
-  const resolvedPromise = Promise.resolve();
-  resolvedPromise.then(() => {
-    process.nextTick(cb);
-  });
+  // add more logic if scheduling
+  process.nextTick(cb);
 };
 
 const load = async (id) => {
   keys.push(id);
+  // new scheduler
   batchScheduleFn(() => {
+    // new dispathcer
     dispatchBatch();
   });
 };

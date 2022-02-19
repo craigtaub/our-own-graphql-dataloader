@@ -17,12 +17,8 @@ const dispatchBatch = () => {
 };
 
 const batchScheduleFn = (cb) => {
-  if (!resolvedPromise) {
-    resolvedPromise = Promise.resolve();
-  }
-  resolvedPromise.then(() => {
-    process.nextTick(cb);
-  });
+  // add more logic if scheduling
+  process.nextTick(cb);
 };
 
 const getCurrentBatch = () => {
