@@ -1,4 +1,4 @@
-// calls batch twice with both keys. but doesnt return
+// calls batch twice with both keys
 
 const run = async () => {
   const keys = [];
@@ -12,10 +12,14 @@ const run = async () => {
     process.nextTick(() => {
       batchFunction(keys);
     });
+    // promise not connected to batch function
+    return Promise.resolve(`id: ${id}`);
   };
 
-  const a = await load(1); // undefined
-  const b = await load(2); // undefined
+  const a = await load(1);
+  const b = await load(2);
+  console.log("a", a); // id: 1
+  console.log("b", b); // id: 2
 };
 
 run();
