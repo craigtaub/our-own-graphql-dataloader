@@ -7,8 +7,8 @@ Includes
 - Batching
 - Ignore caching
 
-Version
+Versions
 
-- just-batch
-- batch-and-scheduler
-- batch-and-promise
+- `just-batch` -> simple
+- `batch-and-scheduler` -> scheduler but not async
+- `batch-and-promise` -> scheduler and async
